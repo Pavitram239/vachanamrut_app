@@ -1,24 +1,150 @@
-/* src/index.css */
+/* Design Tokens & Theme System */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  color-scheme: light;
-  background-color: #f9fafb; /* Light grey background */
-  color: #111827;
+  /* Light Theme (Parchment & Saffron) */
+  --bg-app: #f7f5f0;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #fdfbf7;
+  --bg-muted: #efeae1;
+  --bg-hover: #eae3d5;
+  --border-color: #e5ded0;
+  --border-focus: #c2410c;
+  
+  --text-primary: #231f1c;
+  --text-secondary: #63584e;
+  --text-muted: #8c7e72;
+  --text-inverse: #ffffff;
+
+  --accent-primary: #c2410c;    /* Saffron Terracotta */
+  --accent-hover: #9a3412;
+  --accent-light: #ffedd5;
+  --accent-gold: #b45309;
+
+  --shadow-sm: 0 1px 2px rgba(35, 31, 28, 0.05);
+  --shadow-md: 0 4px 12px rgba(35, 31, 28, 0.08);
+  --shadow-lg: 0 10px 25px rgba(35, 31, 28, 0.12);
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Georgia', 'Merriweather', 'Cinzel', serif;
+  --font-gujarati: 'Shruti', 'Gujarati Sangam MN', 'Nirmala UI', sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --reader-font-size: 16px;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-}
+[data-theme="dark"] {
+  /* Dark Theme (Temple Night & Warm Gold) */
+  --bg-app: #151413;
+  --bg-surface: #1e1c1a;
+  --bg-surface-elevated: #262320;
+  --bg-muted: #2c2824;
+  --bg-hover: #38332e;
+  --border-color: #38332c;
+  --border-focus: #f97316;
 
-#root {
-  width: 100%;
-  height: 100%;
+  --text-primary: #f5f2eb;
+  --text-secondary: #a3998c;
+  --text-muted: #786f64;
+  --text-inverse: #151413;
+
+  --accent-primary: #ea580c;
+  --accent-hover: #f97316;
+  --accent-light: #3d2414;
+  --accent-gold: #d97706;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Typography Utility */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-gujarati {
+  font-family: var(--font-gujarati);
+}
+
+/* Shlok Box Styling */
+.shlok-banner {
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent-primary);
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  margin: 12px 0 20px 0;
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+/* Tag Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+.badge-saffron {
+  background: var(--accent-light);
+  color: var(--accent-primary);
+}
+
+/* Button Reset */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  outline: none;
 }

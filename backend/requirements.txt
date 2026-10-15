@@ -2,7 +2,7 @@ fastapi
 uvicorn
 pydantic
 chromadb
+ollama
 groq
 python-dotenv
-sentence-transformers
-langchain-text-splitters
+rank-bm25
