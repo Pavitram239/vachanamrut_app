@@ -45,14 +45,15 @@ export default function ChatPanel({ onCitationClick, isPanelOpen, lang }) {
     setLoading(true);
 
     try {
-      const baseURL = "http://localhost:10000";
+      const baseURL = import.meta.env.VITE_API_URL || (typeof window !== "undefined" ? `http://${window.location.hostname}:10000` : "http://localhost:10000");
       const res = await fetch(`${baseURL}/ask/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: textToSend,
           history: historyPayload,
-          chapter: scope === "Vachanamrut" ? "Gadhada" : "All",
+          scripture: scope === "Vachanamrut" ? "vachanamrut" : scope === "Swamini Vato" ? "swamini_vato" : "All",
+          chapter: "All",
           section: "All",
           vachanamrut_no: 0
         })

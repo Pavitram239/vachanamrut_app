@@ -95,8 +95,11 @@ def get_shikshapatri(shlok_no: int = Query(None, description="Optional Shlok Num
 @app.post("/ask", response_model=AIResponse)
 def ask_ai(request: QueryRequest):
     
-    # A. Check for Manual Filters (Sidebar)
+    # A. Check for Manual Filters (Sidebar & Scope)
     conditions = []
+    if request.scripture and request.scripture != "All":
+        sc_clean = request.scripture.lower().replace(" ", "_")
+        conditions.append({"scripture": sc_clean})
     if request.chapter != "All": conditions.append({"chapter": request.chapter})
     if request.section != "All": conditions.append({"section": request.section})
     if request.vachanamrut_no > 0: conditions.append({"vachanamrut_no": request.vachanamrut_no})
@@ -114,7 +117,7 @@ def ask_ai(request: QueryRequest):
     
     # C. Handle Results
     if not results['documents'] or not results['documents'][0]:
-         return AIResponse(answer="I could not find relevant information in the Vachanamrut for that request.", citations=[])
+         return AIResponse(answer="I could not find relevant information in the sacred scriptures for that request.", citations=[])
 
     docs = results['documents'][0]
     metas = results['metadatas'][0]
@@ -132,7 +135,7 @@ def ask_ai(request: QueryRequest):
     )
     user_prompt = f"Context:\n{context_text}\n\nQuestion: {request.question}"
     
-    answer = brain_service.generate_answer(system_prompt, user_prompt)
+    answer = brain_service.generate_answer(system_prompt, user_prompt, history=request.history)
 
     citations = [Citation(text=d, metadata=m) for d, m in zip(docs, metas)]
     
@@ -141,8 +144,11 @@ def ask_ai(request: QueryRequest):
 # --- SERVER-SENT EVENTS (SSE) STREAMING CHAT ENDPOINT ---
 @app.post("/ask/stream")
 def ask_ai_stream(request: QueryRequest):
-    # A. Check for Manual Filters (Sidebar)
+    # A. Check for Manual Filters (Sidebar & Scope)
     conditions = []
+    if request.scripture and request.scripture != "All":
+        sc_clean = request.scripture.lower().replace(" ", "_")
+        conditions.append({"scripture": sc_clean})
     if request.chapter != "All": conditions.append({"chapter": request.chapter})
     if request.section != "All": conditions.append({"section": request.section})
     if request.vachanamrut_no > 0: conditions.append({"vachanamrut_no": request.vachanamrut_no})
@@ -179,7 +185,7 @@ def ask_ai_stream(request: QueryRequest):
         yield f"event: citations\ndata: {json.dumps(citations_data)}\n\n"
         
         # 2. Stream tokens from LLM
-        for token in brain_service.stream_answer(system_prompt, user_prompt):
+        for token in brain_service.stream_answer(system_prompt, user_prompt, history=request.history):
             yield f"event: token\ndata: {json.dumps({'token': token})}\n\n"
             
         # 3. Stream completion signal

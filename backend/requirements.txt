@@ -6,3 +6,7 @@ ollama
 groq
 python-dotenv
 rank-bm25
+google-generativeai
+openai
+fastembed
+boto3

@@ -12,6 +12,7 @@ class QueryRequest(BaseModel):
     history: List[ChatMessage] = [] # New Field!
     
     # Manual overrides (Sidebar)
+    scripture: Optional[str] = "All"
     chapter: Optional[str] = "All"
     section: Optional[str] = "All"
     vachanamrut_no: Optional[int] = 0
