@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, BookOpen, Calendar, Clock, ChevronRight, Loader2, ArrowLeft } from "lucide-react";
+import { Search, BookOpen, Calendar, Clock, ChevronRight, Loader2, ArrowLeft, ChevronDown, Filter } from "lucide-react";
 import apiClient from "../utils/CustomFetch";
 import { useResponsive } from "../utils/useResponsive";
 
@@ -72,17 +72,17 @@ export default function VachanamrutView({ lang, initialCitation }) {
   }, [activeItem]);
 
   const sections = [
-    "All",
-    "Gadhada Pratham",
-    "Gadhada Madhya",
-    "Gadhada Antya",
-    "Sarangpur",
-    "Kariyani",
-    "Loya",
-    "Panchala",
-    "Varatal",
-    "Amdavad",
-    "khagol"
+    { id: "All", en: "All Sections (274 Discourses)", gu: "બધા પ્રકરણો (૨૭૪ વચનામૃત)" },
+    { id: "Gadhada Pratham", en: "Gadhada I (Pratham) - 78", gu: "ગઢડા પ્રથમ - ૭૮" },
+    { id: "Gadhada Madhya", en: "Gadhada II (Madhya) - 67", gu: "ગઢડા મધ્ય - ૬૭" },
+    { id: "Gadhada Antya", en: "Gadhada III (Antya) - 39", gu: "ગઢડા અંત્ય - ૩૯" },
+    { id: "Sarangpur", en: "Sarangpur - 18", gu: "સારંગપુર - ૧૮" },
+    { id: "Kariyani", en: "Kariyani - 12", gu: "કારિયાણી - ૧૨" },
+    { id: "Loya", en: "Loya - 18", gu: "લોયા - ૧૮" },
+    { id: "Panchala", en: "Panchala - 7", gu: "પંચાળા - ૭" },
+    { id: "Varatal", en: "Vartal - 20", gu: "વડતાલ - ૨૦" },
+    { id: "Amdavad", en: "Amdavad - 8", gu: "અમદાવાદ - ૮" },
+    { id: "khagol", en: "Khagol-Bhugol - 1", gu: "ખગોળ-ભૂગોળ - ૧" }
   ];
 
   const filteredList = list.filter((item) => {
@@ -126,20 +126,28 @@ export default function VachanamrutView({ lang, initialCitation }) {
             />
           </div>
 
-          {/* Section Filter Pills */}
-          <div style={styles.filterBar}>
-            {sections.map((sec) => (
-              <button
-                key={sec}
-                onClick={() => setSelectedSection(sec)}
-                style={{
-                  ...styles.filterPill,
-                  ...(selectedSection === sec ? styles.filterPillActive : {})
-                }}
+          {/* Section Filter Dropdown */}
+          <div style={styles.dropdownContainer}>
+            <div style={styles.dropdownHeader}>
+              <Filter size={12} color="var(--accent-primary)" />
+              <span style={styles.dropdownLabel}>
+                {localLang === "gu" ? "પ્રકરણ પસંદ કરો" : "Select Section"}
+              </span>
+            </div>
+            <div style={styles.selectWrapper}>
+              <select
+                style={styles.select}
+                value={selectedSection}
+                onChange={(e) => setSelectedSection(e.target.value)}
               >
-                {sec}
-              </button>
-            ))}
+                {sections.map((sec) => (
+                  <option key={sec.id} value={sec.id}>
+                    {localLang === "gu" ? sec.gu : sec.en}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={14} style={styles.selectArrow} />
+            </div>
           </div>
 
           {/* List of Vachanamruts */}
@@ -329,30 +337,49 @@ const styles = {
     fontSize: "13px",
     color: "var(--text-primary)"
   },
-  filterBar: {
-    display: "flex",
-    gap: "6px",
-    padding: "10px 14px",
-    overflowX: "auto",
+  dropdownContainer: {
+    padding: "8px 14px 10px 14px",
     borderBottom: "1px solid var(--border-color)",
-    backgroundColor: "var(--bg-app)"
+    backgroundColor: "var(--bg-app)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px"
   },
-  filterPill: {
-    padding: "4px 10px",
+  dropdownHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "5px"
+  },
+  dropdownLabel: {
     fontSize: "11px",
-    fontWeight: "500",
-    borderRadius: "var(--radius-full)",
-    backgroundColor: "var(--bg-surface)",
-    border: "1px solid var(--border-color)",
-    color: "var(--text-secondary)",
-    whiteSpace: "nowrap",
-    cursor: "pointer"
+    fontWeight: "700",
+    color: "var(--text-muted)",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px"
   },
-  filterPillActive: {
-    backgroundColor: "var(--accent-primary)",
-    color: "#fff",
-    borderColor: "var(--accent-primary)",
-    fontWeight: "600"
+  selectWrapper: {
+    position: "relative",
+    display: "flex",
+    alignItems: "center"
+  },
+  select: {
+    width: "100%",
+    padding: "7px 28px 7px 10px",
+    borderRadius: "var(--radius-md)",
+    border: "1px solid var(--border-color)",
+    backgroundColor: "var(--bg-surface)",
+    color: "var(--text-primary)",
+    fontSize: "12px",
+    fontWeight: "600",
+    appearance: "none",
+    cursor: "pointer",
+    outline: "none"
+  },
+  selectArrow: {
+    position: "absolute",
+    right: "10px",
+    pointerEvents: "none",
+    color: "var(--text-muted)"
   },
   listContainer: {
     flex: 1,
