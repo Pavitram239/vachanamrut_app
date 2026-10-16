@@ -21,7 +21,14 @@ export default function ReadingPanel({ citation, onClose, lang }) {
       setLoading(true);
       setError(null);
       try {
-        if (citation.prakran_no || citation.vat_no) {
+        if (citation.scripture === "shikshapatri" || citation.shlok_no) {
+          const res = await apiClient.get("/api/shikshapatri", {
+            params: {
+              shlok_no: citation.shlok_no
+            }
+          });
+          setData(res.data);
+        } else if (citation.prakran_no || citation.vat_no) {
           const res = await apiClient.get("/api/swaminivato", {
             params: {
               prakran_no: citation.prakran_no || 1,
