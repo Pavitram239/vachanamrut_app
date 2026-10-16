@@ -189,14 +189,10 @@ const styles = {
     borderRadius: "var(--radius-lg)",
     border: "1px solid var(--border-color)",
     boxShadow: "var(--shadow-sm)",
-    position: "relative",
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    position: "relative"
   },
   heroContent: {
-    maxWidth: "760px",
+    maxWidth: "800px",
     margin: "0 auto",
     display: "flex",
     flexDirection: "column",
@@ -219,9 +215,10 @@ const styles = {
   heroTitle: {
     fontWeight: "800",
     color: "var(--text-primary)",
-    lineHeight: "1.25",
-    letterSpacing: "-0.02em",
-    textAlign: "center"
+    lineHeight: "1.3",
+    letterSpacing: "-0.01em",
+    textAlign: "center",
+    margin: 0
   },
   heroText: {
     color: "var(--text-secondary)",
