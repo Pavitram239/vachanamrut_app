@@ -190,19 +190,25 @@ const styles = {
     border: "1px solid var(--border-color)",
     boxShadow: "var(--shadow-sm)",
     position: "relative",
-    overflow: "hidden"
+    overflow: "hidden",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   heroContent: {
-    maxWidth: "700px",
+    maxWidth: "760px",
+    margin: "0 auto",
     display: "flex",
     flexDirection: "column",
-    gap: "14px"
+    alignItems: "center",
+    textAlign: "center",
+    gap: "16px"
   },
   greetingBadge: {
     display: "inline-flex",
     alignItems: "center",
     gap: "6px",
-    padding: "4px 10px",
+    padding: "6px 14px",
     borderRadius: "var(--radius-full)",
     backgroundColor: "var(--accent-light)",
     color: "var(--accent-primary)",
@@ -214,15 +220,20 @@ const styles = {
     fontWeight: "800",
     color: "var(--text-primary)",
     lineHeight: "1.25",
-    letterSpacing: "-0.02em"
+    letterSpacing: "-0.02em",
+    textAlign: "center"
   },
   heroText: {
     color: "var(--text-secondary)",
-    lineHeight: "1.6"
+    lineHeight: "1.6",
+    maxWidth: "640px",
+    textAlign: "center"
   },
   heroActions: {
     display: "flex",
-    gap: "10px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "12px",
     marginTop: "8px"
   },
   btnPrimary: {
