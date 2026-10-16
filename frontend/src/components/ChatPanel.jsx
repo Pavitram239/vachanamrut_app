@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Send, Bot, Book, User, Sparkles, Filter, RefreshCw } from "lucide-react";
 import apiClient from "../utils/CustomFetch";
@@ -8,6 +8,7 @@ export default function ChatPanel({ onCitationClick, isPanelOpen, lang }) {
   const [scope, setScope] = useState("All");
   const [messages, setMessages] = useState([
     {
+      id: "initial",
       role: "assistant",
       content:
         lang === "gu"
@@ -16,6 +17,11 @@ export default function ChatPanel({ onCitationClick, isPanelOpen, lang }) {
     }
   ]);
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   const suggestedPrompts = [
     { en: "How can one control the mind?", gu: "મનને વશ કરવાનો ઉપાય શું છે?" },
@@ -28,17 +34,22 @@ export default function ChatPanel({ onCitationClick, isPanelOpen, lang }) {
     const textToSend = (overrideText || input).trim();
     if (!textToSend || loading) return;
 
-    const userMsg = { role: "user", content: textToSend };
+    const userMsgId = Date.now();
+    const botMsgId = Date.now() + 1;
+    const userMsg = { id: userMsgId, role: "user", content: textToSend };
 
-    const historyPayload = messages.map((m) => ({
-      role: m.role,
-      content: m.content
-    }));
+    // Format previous messages payload (excluding welcome greeting and empty placeholders)
+    const historyPayload = messages
+      .filter((m) => m.content && m.content.trim() && !(m.role === "assistant" && m.content.includes("Jay Swaminarayan") && m.content.length < 160))
+      .map((m) => ({
+        role: m.role,
+        content: m.content
+      }));
 
-    // Create placeholder message for real-time streaming
-    const botMsgId = Date.now();
+    // Add user message AND assistant streaming placeholder to state so user's message is immediately visible
     setMessages((prev) => [
       ...prev,
+      userMsg,
       { id: botMsgId, role: "assistant", content: "", citations: [] }
     ]);
     setInput("");
@@ -186,14 +197,16 @@ export default function ChatPanel({ onCitationClick, isPanelOpen, lang }) {
 
       {/* Messages Scroll Area */}
       <div style={styles.messageList}>
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            style={{
-              ...styles.messageRow,
-              justifyContent: msg.role === "user" ? "flex-end" : "flex-start"
-            }}
-          >
+        {messages.map((msg, idx) => {
+          if (msg.role === "assistant" && !msg.content && loading) return null;
+          return (
+            <div
+              key={msg.id || idx}
+              style={{
+                ...styles.messageRow,
+                justifyContent: msg.role === "user" ? "flex-end" : "flex-start"
+              }}
+            >
             {msg.role === "assistant" && (
               <div style={styles.avatarBot}>
                 <Bot size={16} color="#fff" />
@@ -249,9 +262,11 @@ export default function ChatPanel({ onCitationClick, isPanelOpen, lang }) {
               </div>
             )}
           </div>
-        ))}
+        );
+      })}
 
-        {loading && (
+        {/* Thinking Indicator (shown only while searching scriptures before tokens start streaming) */}
+        {loading && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && !messages[messages.length - 1]?.content && (
           <div style={styles.thinkingRow}>
             <div style={styles.avatarBot}>
               <Bot size={16} color="#fff" />
@@ -262,6 +277,8 @@ export default function ChatPanel({ onCitationClick, isPanelOpen, lang }) {
             </div>
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Suggested Prompts (if chat is fresh) */}

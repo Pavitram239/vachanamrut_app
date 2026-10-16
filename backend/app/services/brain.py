@@ -301,8 +301,26 @@ If no specific reference is mentioned or active, return: {{}}
                 elif len(conditions) > 1:
                     final_filters = {"$and": conditions}
 
+        # Contextualize query if user is asking a follow-up referring to previous context
+        search_text = query
+        if history:
+            import re
+            referential_markers = ["it", "this", "that", "these", "those", "he", "she", "they", "point", "above", "second", "first", "third", "elaborate", "explain", "more", "why", "how", "what about", "meaning"]
+            q_lower = query.lower()
+            is_referential = any(re.search(rf"\b{re.escape(w)}\b", q_lower) for w in referential_markers) or len(query.split()) < 6
+            if is_referential:
+                prev_user_queries = [
+                    (getattr(m, "content", None) or (m.get("content") if isinstance(m, dict) else ""))
+                    for m in history
+                    if (getattr(m, "role", None) or (m.get("role") if isinstance(m, dict) else "")) == "user"
+                ]
+                if prev_user_queries:
+                    last_q = prev_user_queries[-1].strip()
+                    search_text = f"{last_q} {query}"
+                    print(f"🧠 [Brain Search Contextualized] '{query}' -> '{search_text}'")
+
         # Embed query with FastEmbed ONNX
-        query_vector = self.get_embedding(query)
+        query_vector = self.get_embedding(search_text)
 
         try:
             if query_vector:
@@ -313,7 +331,7 @@ If no specific reference is mentioned or active, return: {{}}
                 )
             else:
                 raw = self.collection.query(
-                    query_texts=[query],
+                    query_texts=[search_text],
                     n_results=25,
                     where=final_filters if final_filters else None
                 )
